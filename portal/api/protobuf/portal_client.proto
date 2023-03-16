@@ -1,0 +1,43 @@
+syntax = "proto3";
+package kurtosis_portal_daemon;
+
+// NOTE: It sucks that we have this Go-specific logic inside this file (which should be language-agnostic). However, the Protobuf team have
+// taken a hard stance on this being the way it should be done, so we have to do it this way.
+option go_package = "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang";
+
+// Re-generate with
+//   protoc -I=portal/api/protobuf/ --go_out=portal/api/golang/ --go-grpc_out=portal/api/golang/ --go_opt=module=github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang --go-grpc_opt=module=github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang --go-grpc_opt=require_unimplemented_servers=false portal/api/protobuf/portal_client.proto
+
+import "portal_ping.proto";
+
+service KurtosisPortalClient {
+  // To check availability
+  rpc Ping(PortalPing) returns (PortalPong) {};
+
+  // SwitchContext switches the current context used by Kurtosis.
+  //
+  // If the new context is a dual-backend-context, it connects to it automatically using the connection information
+  // linked to the context Right now, it is expected that the remote environment is running a Kurtosis Portal Server
+  // on port 9720
+  rpc SwitchContext(SwitchContextArgs) returns (SwitchContextResponse) {};
+
+  // TODO: Raw endpoint to forward a port from server to client. This is very low level, in the future the portal
+  //  should accept higher level info, like (enclave_id, service_id, port_id) and automatically find the ephemeral
+  //  port number.
+  rpc ForwardPort(ForwardPortArgs) returns (ForwardPortResponse) {};
+}
+
+message SwitchContextArgs {
+}
+
+message SwitchContextResponse {
+}
+
+message ForwardPortArgs {
+  uint32 local_port_number = 1;
+
+  uint32 remote_port_number = 2;
+}
+
+message ForwardPortResponse {
+}
