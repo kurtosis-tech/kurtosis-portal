@@ -5,22 +5,21 @@ set -euo pipefail   # Bash "strict mode"
 script_dirpath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root_dirpath="$(dirname "${script_dirpath}")"
 
-
-
 # ==================================================================================================
 #                                             Constants
 # ==================================================================================================
-BUILD_SCRIPT_RELATIVE_FILEPATHS=(
-    "portal/scripts/build.sh"
-)
+
+# Daemon code module
+build_directory="${root_dirpath}/build"
+binary_name="kurtosis_portal_daemon"
 
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
-for build_script_rel_filepath in "${BUILD_SCRIPT_RELATIVE_FILEPATHS[@]}"; do
-    build_script_abs_filepath="${root_dirpath}/${build_script_rel_filepath}"
-    if ! bash "${build_script_abs_filepath}"; then
-        echo "Error: Build script '${build_script_abs_filepath}' failed" >&2
-        exit 1
-    fi
-done
+
+# Run tests in daemon golang module
+cd "${root_dirpath}"
+go test ./...
+
+# Build the daemon
+CGO_ENABLED=0 go build -o "${build_directory}/${binary_name}"
