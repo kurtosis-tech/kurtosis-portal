@@ -17,10 +17,10 @@ type PortalArgs struct {
 
 func Parse() (*PortalArgs, error) {
 	args := new(PortalArgs)
-	flag.BoolVar(&args.ServerOnly, "server-only", false, "")
-	flag.StringVar(&args.TlsCaFilePath, "tls-ca", "", "")
-	flag.StringVar(&args.TlsServerKeyFilePath, "tls-server-key", "", "")
-	flag.StringVar(&args.TlsServerCertFilePath, "tls-server-cert", "", "")
+	flag.BoolVar(&args.ServerOnly, "server-only", false, "Optional: runs in server-only mode, no client will be started. Defaults to false.")
+	flag.StringVar(&args.TlsCaFilePath, "tls-ca", "", "Optional: Path to the Certificate Authority file to be used by the server for TLS")
+	flag.StringVar(&args.TlsServerKeyFilePath, "tls-server-key", "", "Optional: Path to the certificate key file to be used by the server for TLS")
+	flag.StringVar(&args.TlsServerCertFilePath, "tls-server-cert", "", "Optional: Path to the Certificate file to be used by the server for TLS")
 	flag.Parse()
 
 	if err := validate(args); err != nil {

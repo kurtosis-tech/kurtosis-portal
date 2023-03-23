@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	chclient "github.com/jpillora/chisel/client"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/client/port_forwarding"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/client/port_forwarding"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
 	"sync"
