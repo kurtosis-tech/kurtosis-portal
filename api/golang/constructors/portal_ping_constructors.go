@@ -1,11 +1,11 @@
 package constructors
 
-import generated "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/generated"
+import portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
 
-func NewPortalPing() *generated.PortalPing {
-	return &generated.PortalPing{}
+func NewPortalPing() *portal_api.PortalPing {
+	return &portal_api.PortalPing{}
 }
 
-func NewPortalPong() *generated.PortalPong {
-	return &generated.PortalPong{}
+func NewPortalPong() *portal_api.PortalPong {
+	return &portal_api.PortalPong{}
 }

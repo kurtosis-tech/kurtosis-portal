@@ -1,13 +1,13 @@
-module github.com/kurtosis-tech/kurtosis-cloud/portal/daemon
+module github.com/kurtosis-tech/kurtosis-portal/daemon
 
 go 1.18
 
-replace github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang => ../api/golang
+replace github.com/kurtosis-tech/kurtosis-portal/api/golang => ../api/golang
 
 require (
 	github.com/google/uuid v1.3.0
 	github.com/jpillora/chisel v1.8.1
-	github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang v0.0.0-00010101000000-000000000000
+	github.com/kurtosis-tech/kurtosis-portal/api/golang v0.0.0-00010101000000-000000000000
 	github.com/kurtosis-tech/kurtosis/contexts-config-store v0.0.0-20230321133325-f4034e562ece
 	github.com/kurtosis-tech/minimal-grpc-server/golang v0.0.0-20230317105020-7ca453c242bd
 	github.com/kurtosis-tech/stacktrace v0.0.0-20211028211901-1c67a77b5409

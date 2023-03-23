@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/constructors"
-	api "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/generated"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/arguments"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/client"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/server"
+	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
+	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/arguments"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/client"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/server"
 	minimal_grpc_server "github.com/kurtosis-tech/minimal-grpc-server/golang/server"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
@@ -98,12 +98,12 @@ func runClient(ctx context.Context, mainArgs *arguments.PortalArgs) error {
 	defer kurtosisPortalClient.Close()
 
 	// Whatever current context should be used, switch to it
-	if _, err := kurtosisPortalClient.SwitchContext(ctx, constructors.NewSwitchContextArgs()); err != nil {
+	if _, err := kurtosisPortalClient.SwitchContext(ctx, portal_constructors.NewSwitchContextArgs()); err != nil {
 		return stacktrace.Propagate(err, "Unable to apply current context configuration, daemon cannot start")
 	}
 
 	kurtosisPortalDaemonRegistrationFunc := func(grpcServer *grpc.Server) {
-		api.RegisterKurtosisPortalClientServer(grpcServer, kurtosisPortalClient)
+		portal_api.RegisterKurtosisPortalClientServer(grpcServer, kurtosisPortalClient)
 	}
 	kurtosisPortalClientDaemon := minimal_grpc_server.NewMinimalGRPCServer(
 		client.PortalClientGrpcPort,
@@ -130,7 +130,7 @@ func runServer(ctx context.Context, mainArgs *arguments.PortalArgs) error {
 	}
 
 	kurtosisPortalDaemonRegistrationFunc := func(grpcServer *grpc.Server) {
-		api.RegisterKurtosisPortalServerServer(grpcServer, kurtosisPortalServer)
+		portal_api.RegisterKurtosisPortalServerServer(grpcServer, kurtosisPortalServer)
 	}
 
 	var kurtosisPortalServerDaemon *minimal_grpc_server.MinimalGRPCServer
