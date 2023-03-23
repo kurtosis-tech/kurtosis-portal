@@ -17,7 +17,7 @@ parameters:
 #  images), so we run everything inside a single job.
 # See also: https://discuss.circleci.com/t/can-docker-images-be-preserved-between-jobs-in-a-workflow-without-a-manual-load-save/23388/12
 jobs:
-  portal_build_api_golang:
+  build_api_golang:
     docker:
       - image: "cimg/go:<< pipeline.parameters.go-version>>"
     steps:
@@ -30,14 +30,10 @@ jobs:
             circleci-agent step halt
           fi
 
-      # The 'git config' and 'go env' steps are to allow Go to read modules from our private Github repos
-      # The KURTOSISBOT_GITHUB_TOKEN is a secret provided at CI build time
       - run: |
-          git config --global url."https://${KURTOSISBOT_GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          go env -w "GOPRIVATE=github.com/kurtosis-tech/*"
-          portal/api/golang/scripts/build.sh
+          api/golang/scripts/build.sh
 
-  portal_build_api_typescript:
+  build_api_typescript:
     docker:
       - image: "cimg/node:<< pipeline.parameters.node-version>>"
     steps:
@@ -53,9 +49,9 @@ jobs:
       # The 'git config' and 'go env' steps are to allow Go to read modules from our private Github repos
       # The KURTOSISBOT_GITHUB_TOKEN is a secret provided at CI build time
       - run: |
-          portal/api/typescript/scripts/build.sh
+          api/typescript/scripts/build.sh
 
-  portal_build_daemon:
+  build_daemon:
     docker:
       - image: "cimg/go:<< pipeline.parameters.go-version>>"
     steps:
@@ -68,12 +64,8 @@ jobs:
             circleci-agent step halt
           fi
 
-      # The 'git config' and 'go env' steps are to allow Go to read modules from our private Github repos
-      # The KURTOSISBOT_GITHUB_TOKEN is a secret provided at CI build time
       - run: |
-          git config --global url."https://${KURTOSISBOT_GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          go env -w "GOPRIVATE=github.com/kurtosis-tech/*"
-          portal/daemon/scripts/build.sh
+          daemon/scripts/build.sh
 
 workflows:
   build:
@@ -86,7 +78,7 @@ workflows:
               ignore:
                 - develop
                 - main
-      - portal_build_api_golang:
+      - build_api_golang:
           context:
             - github-user
           filters:
@@ -94,7 +86,7 @@ workflows:
               ignore:
                 - develop
                 - main
-      - portal_build_api_typescript:
+      - build_api_typescript:
           context:
             - github-user
           filters:
@@ -102,7 +94,7 @@ workflows:
               ignore:
                 - develop
                 - main
-      - portal_build_daemon:
+      - build_daemon:
           context:
             - github-user
           filters:
