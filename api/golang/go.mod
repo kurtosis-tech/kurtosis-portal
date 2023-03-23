@@ -1,4 +1,4 @@
-module github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang
+module github.com/kurtosis-tech/kurtosis-portal/api/golang
 
 go 1.18
 

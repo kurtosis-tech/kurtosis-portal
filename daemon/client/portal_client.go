@@ -2,10 +2,10 @@ package client
 
 import (
 	"context"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/constructors"
-	api "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/generated"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/client/port_forwarding"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/client/port_forwarding/chisel"
+	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
+	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/client/port_forwarding"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/client/port_forwarding/chisel"
 	contexts_state_store_api "github.com/kurtosis-tech/kurtosis/contexts-config-store/api/golang"
 	contexts_state_store_generated "github.com/kurtosis-tech/kurtosis/contexts-config-store/api/golang/generated"
 	"github.com/kurtosis-tech/kurtosis/contexts-config-store/store"
@@ -34,12 +34,12 @@ func NewKurtosisClient() *KurtosisPortalClient {
 	}
 }
 
-func (portalClient *KurtosisPortalClient) Ping(ctx context.Context, ping *api.PortalPing) (*api.PortalPong, error) {
-	return constructors.NewPortalPong(), nil
+func (portalClient *KurtosisPortalClient) Ping(ctx context.Context, ping *portal_api.PortalPing) (*portal_api.PortalPong, error) {
+	return portal_constructors.NewPortalPong(), nil
 
 }
 
-func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, args *api.SwitchContextArgs) (*api.SwitchContextResponse, error) {
+func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, args *portal_api.SwitchContextArgs) (*portal_api.SwitchContextResponse, error) {
 	contextStore := store.GetContextConfigStore()
 
 	portalClient.Lock()
@@ -55,17 +55,17 @@ func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, arg
 		return nil, stacktrace.Propagate(err, "Unable to load current context")
 	}
 
-	return contexts_state_store_api.Visit(currentContext, contexts_state_store_api.KurtosisContextVisitor[api.SwitchContextResponse]{
-		VisitLocalOnlyContextV0: func(localOnlyContext *contexts_state_store_generated.LocalOnlyContextV0) (*api.SwitchContextResponse, error) {
+	return contexts_state_store_api.Visit(currentContext, contexts_state_store_api.KurtosisContextVisitor[portal_api.SwitchContextResponse]{
+		VisitLocalOnlyContextV0: func(localOnlyContext *contexts_state_store_generated.LocalOnlyContextV0) (*portal_api.SwitchContextResponse, error) {
 			logrus.Infof("Switched to local context '%s'", currentContext.Name)
 			newFactory, factoryInitErr := chisel.NewPortForwardSessionFactoryForLocalContext()
 			if factoryInitErr != nil {
 				return nil, stacktrace.Propagate(factoryInitErr, "Unable to build client to remote portal server")
 			}
 			portalClient.factory = newFactory
-			return constructors.NewSwitchContextResponse(), nil
+			return portal_constructors.NewSwitchContextResponse(), nil
 		},
-		VisitRemoteContextV0: func(remoteContext *contexts_state_store_generated.RemoteContextV0) (*api.SwitchContextResponse, error) {
+		VisitRemoteContextV0: func(remoteContext *contexts_state_store_generated.RemoteContextV0) (*portal_api.SwitchContextResponse, error) {
 			logrus.Infof("Switched to remote context '%s' running on '%s'",
 				currentContext.Name, remoteContext.GetHost())
 			var tlsCa []byte
@@ -88,12 +88,12 @@ func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, arg
 				return nil, stacktrace.Propagate(factoryInitErr, "Unable to build client to remote portal server")
 			}
 			portalClient.factory = newFactory
-			return constructors.NewSwitchContextResponse(), nil
+			return portal_constructors.NewSwitchContextResponse(), nil
 		},
 	})
 }
 
-func (portalClient *KurtosisPortalClient) ForwardPort(ctx context.Context, args *api.ForwardPortArgs) (*api.ForwardPortResponse, error) {
+func (portalClient *KurtosisPortalClient) ForwardPort(ctx context.Context, args *portal_api.ForwardPortArgs) (*portal_api.ForwardPortResponse, error) {
 	portalClient.RLock()
 	defer portalClient.RUnlock()
 
@@ -111,14 +111,14 @@ func (portalClient *KurtosisPortalClient) ForwardPort(ctx context.Context, args 
 	}
 
 	if session.IsRunning() {
-		return constructors.NewForwardPortResponse(), nil
+		return portal_constructors.NewForwardPortResponse(), nil
 	}
 
 	if err = session.RunAsync(); err != nil {
 		return nil, stacktrace.Propagate(err, "Error running port forward session")
 	}
 
-	return constructors.NewForwardPortResponse(), nil
+	return portal_constructors.NewForwardPortResponse(), nil
 }
 
 func (portalClient *KurtosisPortalClient) Close() error {

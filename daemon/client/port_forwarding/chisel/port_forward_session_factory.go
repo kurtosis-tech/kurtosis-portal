@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	chclient "github.com/jpillora/chisel/client"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/constructors"
-	api "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/generated"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/arguments"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/client/port_forwarding"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/daemon/server"
+	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
+	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/arguments"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/client/port_forwarding"
+	"github.com/kurtosis-tech/kurtosis-portal/daemon/server"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -51,7 +51,7 @@ type PortForwardSessionFactory struct {
 
 	currentSessions map[uuid.UUID]port_forwarding.PortForwardingSession
 
-	portalServerClient api.KurtosisPortalServerClient
+	portalServerClient portal_api.KurtosisPortalServerClient
 }
 
 // NewPortForwardSessionFactory creates a new port tunnelling sessions factory.
@@ -178,7 +178,7 @@ func (factory *PortForwardSessionFactory) getSimilarExistingSessionsIfAny(params
 	return false, uuid.New()
 }
 
-func portalServerClient(portalServerHost string, portalServerGrpcPort uint32, tlsCa []byte, tlsCert []byte, tlsKey []byte) (api.KurtosisPortalServerClient, error) {
+func portalServerClient(portalServerHost string, portalServerGrpcPort uint32, tlsCa []byte, tlsCert []byte, tlsKey []byte) (portal_api.KurtosisPortalServerClient, error) {
 	url := fmt.Sprintf("%s:%d", portalServerHost, portalServerGrpcPort)
 
 	var err error
@@ -196,7 +196,7 @@ func portalServerClient(portalServerHost string, portalServerGrpcPort uint32, tl
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "An error occurred connecting to the Kurtosis Portal Server on host machine URL '%v'", url)
 	}
-	client := api.NewKurtosisPortalServerClient(clientConn)
+	client := portal_api.NewKurtosisPortalServerClient(clientConn)
 
 	if err = pingServerWithRetries(client); err != nil {
 		return nil, stacktrace.Propagate(err, "Portal server for this context unreachable at '%s'", url)
@@ -204,10 +204,10 @@ func portalServerClient(portalServerHost string, portalServerGrpcPort uint32, tl
 	return client, nil
 }
 
-func pingServerWithRetries(serverClient api.KurtosisPortalServerClient) error {
+func pingServerWithRetries(serverClient portal_api.KurtosisPortalServerClient) error {
 	var err error
 	for i := 1; i <= pingMaxRetries; i++ {
-		_, err = serverClient.Ping(context.Background(), constructors.NewPortalPing())
+		_, err = serverClient.Ping(context.Background(), portal_constructors.NewPortalPing())
 		if err != nil {
 			logrus.Debugf("Error reaching Portal Server for this context (retries %d/%d). Will retry in %v", i, pingMaxRetries, pingRetryDelay)
 			<-time.Tick(5 * time.Second)
