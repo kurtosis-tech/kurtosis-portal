@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 	chserver "github.com/jpillora/chisel/server"
-	"github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/constructors"
-	api "github.com/kurtosis-tech/kurtosis-cloud/portal/api/golang/generated"
+	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
+	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
 	"strconv"
@@ -38,8 +38,8 @@ func NewKurtosisPortalServer(tlsCaFilePath string, tlsServerKeyFilePath string, 
 	}
 }
 
-func (portalServer *KurtosisPortalServer) Ping(ctx context.Context, args *api.PortalPing) (*api.PortalPong, error) {
-	return constructors.NewPortalPong(), nil
+func (portalServer *KurtosisPortalServer) Ping(ctx context.Context, args *portal_api.PortalPing) (*portal_api.PortalPong, error) {
+	return portal_constructors.NewPortalPong(), nil
 }
 
 func (portalServer *KurtosisPortalServer) StartTunnelServer(ctx context.Context, host string, listeningPort uint32) error {

@@ -4,7 +4,7 @@
 // - protoc             v3.21.12
 // source: portal_client.proto
 
-package golang
+package generated
 
 import (
 	context "context"

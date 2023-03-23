@@ -14,7 +14,7 @@ GO_MOD_FILE_MODULE_KEYWORD="module"
 api_proto_rel_dir="protobuf"
 
 # Golang
-api_golang_proto_generated_rel_dir="golang/generated"
+api_golang_proto_generated_rel_dir="golang"
 api_go_mod_rel_file="golang/go.mod"
 
 # Typescript
