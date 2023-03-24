@@ -206,11 +206,12 @@ func portalServerClient(portalServerHost string, portalServerGrpcPort uint32, tl
 
 func pingServerWithRetries(serverClient portal_api.KurtosisPortalServerClient) error {
 	var err error
+	ticker := time.NewTicker(5 * time.Second)
 	for i := 1; i <= pingMaxRetries; i++ {
 		_, err = serverClient.Ping(context.Background(), portal_constructors.NewPortalPing())
 		if err != nil {
 			logrus.Debugf("Error reaching Portal Server for this context (retries %d/%d). Will retry in %v", i, pingMaxRetries, pingRetryDelay)
-			<-time.Tick(5 * time.Second)
+			<-ticker.C
 		} else {
 			if i == 1 {
 				logrus.Debugf("Succeeded reaching Portal Server")
