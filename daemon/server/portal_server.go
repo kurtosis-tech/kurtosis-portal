@@ -62,9 +62,10 @@ func (portalServer *KurtosisPortalServer) StartTunnelServer(ctx context.Context,
 		Reverse:   false, // reverse tunnelling is not exposed through the API yet, turn it off here
 		KeepAlive: 25 * time.Second,
 		TLS: chserver.TLSConfig{
-			CA:   portalServer.tlsCaFilePath,
-			Cert: portalServer.tlsServerCertFilePath,
-			Key:  portalServer.tlsServerKeyFilePath,
+			CA:      portalServer.tlsCaFilePath,
+			Cert:    portalServer.tlsServerCertFilePath,
+			Key:     portalServer.tlsServerKeyFilePath,
+			Domains: []string{},
 		},
 	})
 	if err != nil {

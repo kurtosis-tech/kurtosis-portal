@@ -13,6 +13,7 @@ func BuildTlsCredentials(ca []byte, cert []byte, key []byte) (credentials.Transp
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Error building root CAs and key pair")
 	}
+	// nolint: exhaustruct
 	tlsCredentialsConfig := &tls.Config{
 		Certificates: []tls.Certificate{
 			*keyPair,

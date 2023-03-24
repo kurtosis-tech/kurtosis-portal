@@ -26,6 +26,7 @@ type PortForwardSession struct {
 func NewPortForwardSession(sessionUuid uuid.UUID, params *port_forwarding.PortForwardingParams, chiselClient *chclient.Client) *PortForwardSession {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	return &PortForwardSession{
+		Mutex:         sync.Mutex{},
 		uuid:          sessionUuid,
 		isRunning:     false,
 		context:       ctx,
@@ -38,11 +39,13 @@ func NewPortForwardSession(sessionUuid uuid.UUID, params *port_forwarding.PortFo
 func NewLocalNoopForwardSession(sessionUuid uuid.UUID) *PortForwardSession {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	return &PortForwardSession{
-		uuid:         sessionUuid,
-		isRunning:    false,
-		context:      ctx,
-		cancelFunc:   cancelFunc,
-		chiselClient: nil,
+		Mutex:         sync.Mutex{},
+		uuid:          sessionUuid,
+		isRunning:     false,
+		context:       ctx,
+		cancelFunc:    cancelFunc,
+		sessionParams: nil,
+		chiselClient:  nil,
 	}
 }
 
