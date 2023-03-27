@@ -67,7 +67,7 @@ jobs:
       - run: |
           daemon/scripts/build.sh
 
-  push_daemon_artifacts:
+  publish_daemon_artifacts_dry_run:
     docker:
       - image: "cimg/go:<< pipeline.parameters.go-version >>"
     steps:
@@ -79,7 +79,23 @@ jobs:
       - checkout
 
       - run: |
-          goreleaser release --rm-dist
+          cd daemon/
+          goreleaser release --clean --snapshot
+
+  publish_daemon_artifacts:
+    docker:
+      - image: "cimg/go:<< pipeline.parameters.go-version >>"
+    steps:
+      # Install goreleaser
+      - run: |
+          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+          sudo apt update
+          sudo apt install goreleaser
+      - checkout
+
+      - run: |
+          cd daemon/
+          goreleaser release --clean
 
 workflows:
   build:
@@ -116,13 +132,21 @@ workflows:
               ignore:
                 - develop
                 - main
-      - push_daemon_artifacts:
+      - publish_daemon_artifacts_dry_run:
           context:
             - github-user
           requires:
             - build_daemon
             - build_api_typescript
             - build_api_golang
+          filters:
+            branches:
+              ignore:
+                - develop
+                - main
+      - publish_daemon_artifacts:
+          context:
+            - github-user
           filters:
             branches:
               ignore: /.*/
