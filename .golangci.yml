@@ -1,3 +1,11 @@
+linters-settings:
+  staticcheck:
+    checks:
+      - all
+  gosimple:
+    checks:
+      - all
+
 linters:
   enable:
     - exhaustruct
