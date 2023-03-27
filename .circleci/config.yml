@@ -80,6 +80,7 @@ jobs:
 
       - run: |
           cd daemon/
+          export GITHUB_TOKEN=${KURTOSISBOT_GITHUB_TOKEN}
           goreleaser release --clean --snapshot
 
   publish_daemon_artifacts:
