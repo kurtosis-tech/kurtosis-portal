@@ -1,6 +1,9 @@
 package port_forwarding
 
-import "fmt"
+import (
+	"fmt"
+	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
+)
 
 const (
 	remoteDefaultHost = "localhost"
@@ -11,9 +14,10 @@ type PortForwardingParams struct {
 	RemoteHost       string
 	RemotePortNumber uint32
 	Reverse          bool
+	Protocol         portal_api.TransportProtocol
 }
 
-func NewPortForwardingParams(localPortNumber uint32, optionalRemoteHost string, remotePortNumber uint32, reverse bool) *PortForwardingParams {
+func NewPortForwardingParams(localPortNumber uint32, optionalRemoteHost string, remotePortNumber uint32, reverse bool, protocol portal_api.TransportProtocol) *PortForwardingParams {
 	var remoteHost string
 	if optionalRemoteHost == "" {
 		remoteHost = remoteDefaultHost
@@ -25,6 +29,7 @@ func NewPortForwardingParams(localPortNumber uint32, optionalRemoteHost string, 
 		RemoteHost:       remoteHost,
 		RemotePortNumber: remotePortNumber,
 		Reverse:          reverse,
+		Protocol:         protocol,
 	}
 }
 
@@ -42,7 +47,11 @@ func (params *PortForwardingParams) String() string {
 	if params.Reverse {
 		reversePrefix = "R:"
 	}
-	return fmt.Sprintf("%s%d:%s:%d", reversePrefix, params.LocalPortNumber, params.RemoteHost, params.RemotePortNumber)
+	var protocolSuffix string
+	if params.Protocol == portal_api.TransportProtocol_UDP {
+		protocolSuffix = "/udp"
+	}
+	return fmt.Sprintf("%s%d:%s:%d%s", reversePrefix, params.LocalPortNumber, params.RemoteHost, params.RemotePortNumber, protocolSuffix)
 }
 
 func (params *PortForwardingParams) Equals(otherParams *PortForwardingParams) bool {
