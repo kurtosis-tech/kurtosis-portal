@@ -104,8 +104,8 @@ func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.Por
 	newSessionUuid := uuid.New()
 	logrus.Infof("Creating new port forward session '%s' with UUID: '%s'", params.String(), newSessionUuid)
 
-	if params.IsDummySession() {
-		newSession := NewLocalNoopForwardSession(newSessionUuid)
+	if factory.isContextLocal && params.IsIdentify() {
+		newSession := NewLocalNoopForwardSession(newSessionUuid, params)
 		factory.currentSessions[newSessionUuid] = newSession
 		return newSession, nil
 	}

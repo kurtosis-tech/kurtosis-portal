@@ -28,8 +28,8 @@ func NewPortForwardingParams(localPortNumber uint32, optionalRemoteHost string, 
 	}
 }
 
-func (params *PortForwardingParams) IsDummySession() bool {
-	if params.RemoteHost == "" && params.LocalPortNumber == params.RemotePortNumber {
+func (params *PortForwardingParams) IsIdentify() bool {
+	if params.RemoteHost == remoteDefaultHost && params.LocalPortNumber == params.RemotePortNumber {
 		// This is a case where we need to tunnel a local port to its same port number. This is useless, we don't need
 		// to do anything
 		return true

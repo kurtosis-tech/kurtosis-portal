@@ -36,7 +36,7 @@ func NewPortForwardSession(sessionUuid uuid.UUID, params *port_forwarding.PortFo
 	}
 }
 
-func NewLocalNoopForwardSession(sessionUuid uuid.UUID) *PortForwardSession {
+func NewLocalNoopForwardSession(sessionUuid uuid.UUID, params *port_forwarding.PortForwardingParams) *PortForwardSession {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	return &PortForwardSession{
 		Mutex:         sync.Mutex{},
@@ -44,7 +44,7 @@ func NewLocalNoopForwardSession(sessionUuid uuid.UUID) *PortForwardSession {
 		isRunning:     false,
 		context:       ctx,
 		cancelFunc:    cancelFunc,
-		sessionParams: nil,
+		sessionParams: params,
 		chiselClient:  nil,
 	}
 }
@@ -76,6 +76,11 @@ func (session *PortForwardSession) RunBlocking() error {
 	session.Lock()
 	defer session.Unlock() // deferring an unlock to make sure lock gets released if an error happens
 
+	if session.chiselClient == nil {
+		// This is a NoOp session, do nothing
+		return nil
+	}
+
 	if session.isRunning {
 		return stacktrace.NewError("Session already running: '%s'", session.uuid)
 	}
@@ -94,6 +99,11 @@ func (session *PortForwardSession) RunBlocking() error {
 func (session *PortForwardSession) RunAsync() error {
 	session.Lock()
 	defer session.Unlock()
+
+	if session.chiselClient == nil {
+		// This is a NoOp session, do nothing
+		return nil
+	}
 
 	if session.isRunning {
 		return stacktrace.NewError("Session already running: '%s'", session.uuid)
