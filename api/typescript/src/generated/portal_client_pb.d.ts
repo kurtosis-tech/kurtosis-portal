@@ -38,6 +38,11 @@ export class ForwardPortArgs extends jspb.Message {
   getRemotePortNumber(): number;
   setRemotePortNumber(value: number): ForwardPortArgs;
 
+  getProtocol(): TransportProtocol;
+  setProtocol(value: TransportProtocol): ForwardPortArgs;
+  hasProtocol(): boolean;
+  clearProtocol(): ForwardPortArgs;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ForwardPortArgs.AsObject;
   static toObject(includeInstance: boolean, msg: ForwardPortArgs): ForwardPortArgs.AsObject;
@@ -50,6 +55,12 @@ export namespace ForwardPortArgs {
   export type AsObject = {
     localPortNumber: number,
     remotePortNumber: number,
+    protocol?: TransportProtocol,
+  }
+
+  export enum ProtocolCase { 
+    _PROTOCOL_NOT_SET = 0,
+    PROTOCOL = 3,
   }
 }
 
@@ -67,3 +78,7 @@ export namespace ForwardPortResponse {
   }
 }
 
+export enum TransportProtocol { 
+  TCP = 0,
+  UDP = 1,
+}

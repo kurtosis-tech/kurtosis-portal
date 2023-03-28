@@ -39,7 +39,7 @@ func (portalClient *KurtosisPortalClient) Ping(ctx context.Context, ping *portal
 
 }
 
-func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, args *portal_api.SwitchContextArgs) (*portal_api.SwitchContextResponse, error) {
+func (portalClient *KurtosisPortalClient) SwitchContext(_ context.Context, _ *portal_api.SwitchContextArgs) (*portal_api.SwitchContextResponse, error) {
 	contextStore := store.GetContextConfigStore()
 
 	portalClient.Lock()
@@ -93,7 +93,7 @@ func (portalClient *KurtosisPortalClient) SwitchContext(ctx context.Context, arg
 	})
 }
 
-func (portalClient *KurtosisPortalClient) ForwardPort(ctx context.Context, args *portal_api.ForwardPortArgs) (*portal_api.ForwardPortResponse, error) {
+func (portalClient *KurtosisPortalClient) ForwardPort(_ context.Context, args *portal_api.ForwardPortArgs) (*portal_api.ForwardPortResponse, error) {
 	portalClient.RLock()
 	defer portalClient.RUnlock()
 
@@ -105,7 +105,7 @@ func (portalClient *KurtosisPortalClient) ForwardPort(ctx context.Context, args 
 	remotePort := args.RemotePortNumber
 
 	// we don't yet use the feature of tunneling to another host. Same for reverse tunneling
-	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel))
+	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel, args.GetProtocol()))
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to initiate new session from %d to %d", localPort, remotePort)
 	}
