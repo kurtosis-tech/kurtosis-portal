@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  kurtosis-docs-checker: kurtosis-tech/docs-checker@0.2.1
+  kurtosis-docs-checker: kurtosis-tech/docs-checker@0.2.4
 
 parameters:
   go-version:
@@ -104,6 +104,7 @@ workflows:
       # -- PR check jobs ------------------------------------------
       - kurtosis-docs-checker/check-docs:
           markdown-link-check-config-json: "{}"
+          should-check-changelog: false
           filters:
             branches:
               ignore:
