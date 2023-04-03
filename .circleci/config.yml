@@ -67,6 +67,20 @@ jobs:
       - run: |
           daemon/scripts/build.sh
 
+  integration_tests:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+
+      - run: |
+          echo "deb [trusted=yes] https://apt.fury.io/kurtosis-tech/ /" | sudo tee /etc/apt/sources.list.d/kurtosis.list
+          sudo apt update
+          sudo apt install kurtosis-cli
+
+      - run: |
+          scripts/run-all-kurtosis-tests.sh
+
   publish_daemon_artifacts_dry_run:
     docker:
       - image: "cimg/go:<< pipeline.parameters.go-version >>"
@@ -146,9 +160,14 @@ workflows:
               ignore:
                 - develop
                 - main
+      - integration_tests:
+          context:
+            - github-user
       - publish_daemon_artifacts:
           context:
             - github-user
+          requires:
+            - integration_tests
           filters:
             branches:
               ignore: /.*/

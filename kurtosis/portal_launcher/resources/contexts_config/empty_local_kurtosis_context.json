@@ -1,0 +1,7 @@
+{
+    "uuid": {
+        "value": "{{.CONTEXT_ID}}"
+    },
+    "name": "{{.CONTEXT_NAME}}",
+    "localOnlyContextV0": {}
+}

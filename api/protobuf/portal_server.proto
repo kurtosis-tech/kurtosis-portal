@@ -5,9 +5,14 @@ package kurtosis_portal_daemon;
 // taken a hard stance on this being the way it should be done, so we have to do it this way.
 option go_package = "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated";
 
+import "google/api/annotations.proto";
 import "portal_ping.proto";
 
 service KurtosisPortalServer {
   // To check availability
-  rpc Ping(PortalPing) returns (PortalPong) {};
+  rpc Ping(PortalPing) returns (PortalPong) {
+    option (google.api.http) = {
+      post: "/server/grpc/ping"
+    };
+  };
 }

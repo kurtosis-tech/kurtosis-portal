@@ -5,23 +5,36 @@ package kurtosis_portal_daemon;
 // taken a hard stance on this being the way it should be done, so we have to do it this way.
 option go_package = "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated";
 
+import "google/api/annotations.proto";
 import "portal_ping.proto";
 
 service KurtosisPortalClient {
   // To check availability
-  rpc Ping(PortalPing) returns (PortalPong) {};
+  rpc Ping(PortalPing) returns (PortalPong) {
+    option (google.api.http) = {
+      post: "/client/grpc/ping"
+    };
+  };
 
   // SwitchContext switches the current context used by Kurtosis.
   //
   // If the new context is a dual-backend-context, it connects to it automatically using the connection information
   // linked to the context Right now, it is expected that the remote environment is running a Kurtosis Portal Server
   // on port 9720
-  rpc SwitchContext(SwitchContextArgs) returns (SwitchContextResponse) {};
+  rpc SwitchContext(SwitchContextArgs) returns (SwitchContextResponse) {
+    option (google.api.http) = {
+      post: "/client/grpc/switch-context"
+    };
+  };
 
   // TODO: Raw endpoint to forward a port from server to client. This is very low level, in the future the portal
   //  should accept higher level info, like (enclave_id, service_id, port_id) and automatically find the ephemeral
   //  port number.
-  rpc ForwardPort(ForwardPortArgs) returns (ForwardPortResponse) {};
+  rpc ForwardPort(ForwardPortArgs) returns (ForwardPortResponse) {
+    option (google.api.http) = {
+      post: "/client/grpc/forward-port"
+    };
+  };
 }
 
 message SwitchContextArgs {

@@ -70,8 +70,10 @@ doc/tags
 # Test binary, built with `go test -c`
 *.test
 
+# protobuf imports that are re-cloned on every build
+api/protobuf/googleapis
 
-# Output directories
+# Output directoriescd
 build/
 dist/
 

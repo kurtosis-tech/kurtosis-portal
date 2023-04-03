@@ -5,21 +5,20 @@ set -euo pipefail   # Bash "strict mode"
 script_dirpath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root_dirpath="$(dirname "${script_dirpath}")"
 
+
+
 # ==================================================================================================
 #                                             Constants
 # ==================================================================================================
-
-# Daemon code module
-build_directory="${root_dirpath}/build"
-binary_name="kurtosis_portal"
+KURTOSIS_PKG_ROOT="kurtosis/"
+TEST_SOURCE_ROOT="${KURTOSIS_PKG_ROOT}integration_tests/"
+TEST_FILE_PATTERN="*_test.star"
 
 # ==================================================================================================
 #                                             Main Logic
 # ==================================================================================================
-
-# Run tests in daemon golang module
-cd "${root_dirpath}"
-go test ./...
-
-# Build the daemon
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o "${build_directory}/${binary_name}"
+for test_file in ${TEST_SOURCE_ROOT}${TEST_FILE_PATTERN}; do
+    test_file_name=$(basename ${test_file})
+    echo "Running test for test file ${test_file_name}"
+    kurtosis run "${KURTOSIS_PKG_ROOT}" "{\"test\": \"${test_file_name}\"}"
+done

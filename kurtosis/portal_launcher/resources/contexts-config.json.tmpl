@@ -1,0 +1,26 @@
+{
+  "currentContextUuid": {
+    "value": "54702bfbc6f242bea540134a77186d22"
+  },
+  "contexts": [
+    {
+      "uuid": {
+        "value": "dc2a9471c70649b7aafae2448970dd2e"
+      },
+      "name": "default",
+      "localOnlyContextV0": {}
+    },
+    {
+      "uuid": {
+        "value": "54702bfbc6f242bea540134a77186d22"
+      },
+      "name": "kurtosis-kloud-test",
+      "remoteContextV0": {
+        "host": "{{.SERVER_IP}}",
+        "remotePortalPort": {{.SERVICE_GRPC_PORT}},
+        "kurtosisBackendPort": 9722,
+        "tunnelPort": {{.SERVICE_TUNNEL_PORT}}
+      }
+    }
+  ]
+}
