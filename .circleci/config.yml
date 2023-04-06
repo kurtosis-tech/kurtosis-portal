@@ -1,7 +1,20 @@
 version: 2.1
 
+
+# Install go version 1.18 to run our integration tests on the minimal version we support
+steps_install_go_1_18: &steps_install_go_1_18
+  - run: |
+      wget https://go.dev/dl/go1.18.10.linux-amd64.tar.gz
+      sudo rm -rf /usr/local/go
+      sudo tar -C /usr/local -xzf go1.18.10.linux-amd64.tar.gz
+
 orbs:
   kurtosis-docs-checker: kurtosis-tech/docs-checker@0.2.4
+
+executors:
+  ubuntu_vm:
+    machine:
+      image: ubuntu-2004:202201-02
 
 parameters:
   go-version:
@@ -10,6 +23,9 @@ parameters:
   node-version:
     type: string
     default: "16.13.0"
+  docker-engine-version:
+    type: string
+    default: 20.10.7
 
 # NOTE: Because CircleCI jobs run on separate machines from each other, we duplicate steps (like checkout) between jobs. This is because doing the "correct" DRY
 #  refactoring of, "one job for checkout, one job for build Docker image, etc." would require a) persisting files between jobs and b) persisting Docker images between
@@ -79,8 +95,30 @@ jobs:
       - checkout
 
       - run: |
+          ./daemon/scripts/build.sh
+
+      - run: |
           cd daemon/
           goreleaser release --clean --snapshot
+
+  integration_tests:
+    executor: ubuntu_vm
+    steps:
+      - checkout
+
+      - <<: *steps_install_go_1_18
+
+      - run: |
+          echo "deb [trusted=yes] https://apt.fury.io/kurtosis-tech/ /" | sudo tee /etc/apt/sources.list.d/kurtosis.list
+          sudo apt update
+          sudo apt install kurtosis-cli
+
+      - run: |
+          ./daemon/scripts/build.sh      
+
+      - run: |
+          version="$(./daemon/scripts/get-docker-tag.sh)"
+          kurtosis run ./kurtosis "{\"version\": \"${version}\"}"
 
   publish_daemon_artifacts:
     docker:
@@ -97,6 +135,33 @@ jobs:
           cd daemon/
           export GITHUB_TOKEN=${KURTOSISBOT_GITHUB_TOKEN}
           goreleaser release --clean
+
+  publish_portal_image:
+    docker:
+      - image: "cimg/go:<< pipeline.parameters.go-version >>"
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: "<< pipeline.parameters.docker-engine-version>>"
+      - run: echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
+
+      - run: |
+          skip_docker_image_building=true
+          daemon/scripts/build.sh "${skip_docker_image_building}"
+      - run: |
+          set -euo pipefail
+          source daemon/scripts/_constants.env
+          dockerfile_filepath='daemon/Dockerfile'
+          version_build="$(./daemon/scripts/get-docker-tag.sh)"
+          version_to_publish="${CIRCLE_TAG}" # this job is run only on tags
+          echo "Version that was built: ${version_build}"
+          echo "Version that will be published: ${version_to_publish}"
+          image_name_with_version="${IMAGE_ORG_AND_REPO}:${version_build}"
+          image_name_to_publish_semver="${IMAGE_ORG_AND_REPO}:${version_to_publish}"
+          image_name_to_publish_latest="${IMAGE_ORG_AND_REPO}:latest"
+          push_to_dockerhub=false ## TODO: toggle on when it's ready
+          scripts/docker-image-builder.sh "${push_to_dockerhub}" "${dockerfile_filepath}" "${image_name_with_version}" "${image_name_to_publish_semver}" "${image_name_to_publish_latest}"
 
 workflows:
   build:
@@ -146,6 +211,18 @@ workflows:
               ignore:
                 - develop
                 - main
+      - integration_tests:
+          context:
+            - github-user
+          requires:
+            - build_daemon
+            - build_api_typescript
+            - build_api_golang
+          filters:
+            branches:
+              ignore:
+                - develop
+                - main
       - publish_daemon_artifacts:
           context:
             - github-user
@@ -154,3 +231,13 @@ workflows:
               ignore: /.*/
             tags:
               only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+      - publish_portal_image:
+          context:
+            - docker-user
+            - github-user
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+
