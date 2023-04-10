@@ -20,6 +20,8 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 
+var google_api_annotations_pb = require('./google/api/annotations_pb.js')
+
 var portal_ping_pb = require('./portal_ping_pb.js')
 const proto = {};
 proto.kurtosis_portal_daemon = require('./portal_server_pb.js');
