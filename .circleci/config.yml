@@ -117,8 +117,7 @@ jobs:
           ./daemon/scripts/build.sh      
 
       - run: |
-          version="$(./daemon/scripts/get-docker-tag.sh)"
-          kurtosis run ./kurtosis "{\"version\": \"${version}\"}"
+          ./scripts/run-all-kurtosis-tests.sh
 
   publish_daemon_artifacts:
     docker:

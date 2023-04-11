@@ -1,0 +1,12 @@
+{
+  "uuid": {
+    "value": "<<CONTEXT_ID_CHANGE_ME>>"
+  },
+  "name": "<<CONTEXT_ID_CHANGE_ME>>",
+  "remoteContextV0": {
+    "host": "<<REMOTE_SERVER_ID_CHANGE_ME>>",
+    "remotePortalPort": 9720,
+    "kurtosisBackendPort": 9722,
+    "tunnelPort": 9721
+  }
+}
