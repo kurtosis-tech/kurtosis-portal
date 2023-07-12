@@ -1,5 +1,5 @@
-PORTAL_SERVICE_SUFFIX = "_service"
-PORTAL_PROXY_SUFFIX = "_proxy"
+PORTAL_SERVICE_SUFFIX = "-service"
+PORTAL_PROXY_SUFFIX = "-proxy"
 
 # Portal server constants
 SERVER_GRPC_PORT_ID = "server_grpc"
