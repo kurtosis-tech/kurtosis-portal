@@ -42,7 +42,6 @@ func (portalClient *KurtosisPortalClient) Ping(ctx context.Context, ping *portal
 		return nil, stacktrace.Propagate(err, "Portal client is running but connection with remote is unhealthy")
 	}
 	return portal_constructors.NewPortalPong(), nil
-
 }
 
 func (portalClient *KurtosisPortalClient) SwitchContext(_ context.Context, _ *portal_api.SwitchContextArgs) (*portal_api.SwitchContextResponse, error) {
