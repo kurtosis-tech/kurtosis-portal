@@ -169,6 +169,13 @@ func (factory *PortForwardSessionFactory) GetSessions() map[uuid.UUID]port_forwa
 	return factory.currentSessions
 }
 
+func (factory *PortForwardSessionFactory) IsHealthy(ctx context.Context) error {
+	if _, err := factory.portalServerClient.Ping(ctx, portal_constructors.NewPortalPing()); err != nil {
+		return stacktrace.Propagate(err, "Unable to communicate with Portal Server.")
+	}
+	return nil
+}
+
 func (factory *PortForwardSessionFactory) getSimilarExistingSessionsIfAny(params *port_forwarding.PortForwardingParams) (bool, uuid.UUID) {
 	for sessionUuid, otherSession := range factory.currentSessions {
 		if otherSession.GetParams().Equals(params) {
