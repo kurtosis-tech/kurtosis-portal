@@ -17,13 +17,7 @@ type PortForwardingParams struct {
 	Protocol         portal_api.TransportProtocol
 }
 
-func NewPortForwardingParams(localPortNumber uint32, optionalRemoteHost string, remotePortNumber uint32, reverse bool, protocol portal_api.TransportProtocol) *PortForwardingParams {
-	var remoteHost string
-	if optionalRemoteHost == "" {
-		remoteHost = remoteDefaultHost
-	} else {
-		remoteHost = optionalRemoteHost
-	}
+func NewPortForwardingParams(localPortNumber uint32, remoteHost string, remotePortNumber uint32, reverse bool, protocol portal_api.TransportProtocol) *PortForwardingParams {
 	return &PortForwardingParams{
 		LocalPortNumber:  localPortNumber,
 		RemoteHost:       remoteHost,

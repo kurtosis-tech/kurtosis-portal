@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+	"sync"
+
 	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
 	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
 	"github.com/kurtosis-tech/kurtosis-portal/daemon/client/port_forwarding"
@@ -11,7 +13,6 @@ import (
 	"github.com/kurtosis-tech/kurtosis/contexts-config-store/store"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
-	"sync"
 )
 
 const (
@@ -108,9 +109,9 @@ func (portalClient *KurtosisPortalClient) ForwardPort(_ context.Context, args *p
 
 	localPort := args.LocalPortNumber
 	remotePort := args.RemotePortNumber
+	remoteEndpointType := args.RemoteEndpointType
 
-	// we don't yet use the feature of tunneling to another host. Same for reverse tunneling
-	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel, args.GetProtocol()))
+	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel, args.GetProtocol()), remoteEndpointType)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to initiate new session from %d to %d", localPort, remotePort)
 	}

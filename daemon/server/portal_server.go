@@ -2,14 +2,15 @@ package server
 
 import (
 	"context"
+	"strconv"
+	"sync"
+	"time"
+
 	chserver "github.com/jpillora/chisel/server"
 	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
 	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
 	"github.com/kurtosis-tech/stacktrace"
 	"github.com/sirupsen/logrus"
-	"strconv"
-	"sync"
-	"time"
 )
 
 const (
@@ -25,21 +26,35 @@ type KurtosisPortalServer struct {
 	tlsServerKeyFilePath  string
 	tlsServerCertFilePath string
 
+	remoteHost string
+
 	killTunnelFunc func() error
 }
 
-func NewKurtosisPortalServer(tlsCaFilePath string, tlsServerKeyFilePath string, tlsServerCertFilePath string) *KurtosisPortalServer {
+func NewKurtosisPortalServer(tlsCaFilePath string, tlsServerKeyFilePath string, tlsServerCertFilePath string, remoteHost string) *KurtosisPortalServer {
 	return &KurtosisPortalServer{
 		tunnelMutex:           &sync.Mutex{},
 		tlsCaFilePath:         tlsCaFilePath,
 		tlsServerKeyFilePath:  tlsServerKeyFilePath,
 		tlsServerCertFilePath: tlsServerCertFilePath,
+		remoteHost:            remoteHost,
 		killTunnelFunc:        nil,
 	}
 }
 
 func (portalServer *KurtosisPortalServer) Ping(ctx context.Context, args *portal_api.PortalPing) (*portal_api.PortalPong, error) {
 	return portal_constructors.NewPortalPong(), nil
+}
+
+func (portalServer *KurtosisPortalServer) GetRemoteEndpoints(ctx context.Context, args *portal_api.GetRemoteEndpointsArgs) (*portal_api.GetRemoteEndpointsResponse, error) {
+	endpointTypes := []portal_api.RemoteEndpointType{}
+	if portalServer.remoteHost != "" {
+		endpointTypes = []portal_api.RemoteEndpointType{
+			portal_api.RemoteEndpointType_Apic,
+			portal_api.RemoteEndpointType_UserService,
+		}
+	}
+	return portal_constructors.NewGetRemoteEndpointsResponse(endpointTypes, portalServer.remoteHost), nil
 }
 
 func (portalServer *KurtosisPortalServer) StartTunnelServer(ctx context.Context, host string, listeningPort uint32) error {

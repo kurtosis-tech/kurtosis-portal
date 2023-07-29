@@ -13,6 +13,8 @@ type PortalArgs struct {
 
 	TlsServerKeyFilePath  string
 	TlsServerCertFilePath string
+
+	RemoteHost string
 }
 
 func Parse() (*PortalArgs, error) {
@@ -21,6 +23,7 @@ func Parse() (*PortalArgs, error) {
 	flag.StringVar(&args.TlsCaFilePath, "tls-ca", "", "Optional: Path to the Certificate Authority file to be used by the server for TLS")
 	flag.StringVar(&args.TlsServerKeyFilePath, "tls-server-key", "", "Optional: Path to the certificate key file to be used by the server for TLS")
 	flag.StringVar(&args.TlsServerCertFilePath, "tls-server-cert", "", "Optional: Path to the Certificate file to be used by the server for TLS")
+	flag.StringVar(&args.RemoteHost, "remote-host", "", "Optional: Remote host to create remote endpoints on")
 	flag.Parse()
 
 	if err := validate(args); err != nil {

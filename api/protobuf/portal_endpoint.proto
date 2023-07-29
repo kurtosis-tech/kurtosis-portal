@@ -1,0 +1,12 @@
+syntax = "proto3";
+package kurtosis_portal_daemon;
+
+// NOTE: It sucks that we have this Go-specific logic inside this file (which should be language-agnostic). However, the Protobuf team have
+// taken a hard stance on this being the way it should be done, so we have to do it this way.
+option go_package = "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated";
+
+enum RemoteEndpointType {
+  Apic = 0;
+  UserService = 1;
+  Engine = 2;
+}

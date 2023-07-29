@@ -121,7 +121,7 @@ func runClient(ctx context.Context, mainArgs *arguments.PortalArgs) error {
 }
 
 func runServer(ctx context.Context, mainArgs *arguments.PortalArgs) error {
-	kurtosisPortalServer := server.NewKurtosisPortalServer(mainArgs.TlsCaFilePath, mainArgs.TlsServerKeyFilePath, mainArgs.TlsServerCertFilePath)
+	kurtosisPortalServer := server.NewKurtosisPortalServer(mainArgs.TlsCaFilePath, mainArgs.TlsServerKeyFilePath, mainArgs.TlsServerCertFilePath, mainArgs.RemoteHost)
 	defer kurtosisPortalServer.Close()
 
 	err := kurtosisPortalServer.StartTunnelServer(ctx, server.PortalServerTunnelListeningHost, server.PortalServerTunnelPort)

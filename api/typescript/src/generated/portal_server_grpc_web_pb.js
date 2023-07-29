@@ -22,6 +22,8 @@ grpc.web = require('grpc-web');
 
 var google_api_annotations_pb = require('./google/api/annotations_pb.js')
 
+var portal_endpoint_pb = require('./portal_endpoint_pb.js')
+
 var portal_ping_pb = require('./portal_ping_pb.js')
 const proto = {};
 proto.kurtosis_portal_daemon = require('./portal_server_pb.js');
@@ -136,6 +138,67 @@ proto.kurtosis_portal_daemon.KurtosisPortalServerPromiseClient.prototype.ping =
       request,
       metadata || {},
       methodDescriptor_KurtosisPortalServer_Ping);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.kurtosis_portal_daemon.GetRemoteEndpointsArgs,
+ *   !proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse>}
+ */
+const methodDescriptor_KurtosisPortalServer_GetRemoteEndpoints = new grpc.web.MethodDescriptor(
+  '/kurtosis_portal_daemon.KurtosisPortalServer/GetRemoteEndpoints',
+  grpc.web.MethodType.UNARY,
+  proto.kurtosis_portal_daemon.GetRemoteEndpointsArgs,
+  proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse,
+  /**
+   * @param {!proto.kurtosis_portal_daemon.GetRemoteEndpointsArgs} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.kurtosis_portal_daemon.GetRemoteEndpointsArgs} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.kurtosis_portal_daemon.KurtosisPortalServerClient.prototype.getRemoteEndpoints =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/kurtosis_portal_daemon.KurtosisPortalServer/GetRemoteEndpoints',
+      request,
+      metadata || {},
+      methodDescriptor_KurtosisPortalServer_GetRemoteEndpoints,
+      callback);
+};
+
+
+/**
+ * @param {!proto.kurtosis_portal_daemon.GetRemoteEndpointsArgs} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.kurtosis_portal_daemon.GetRemoteEndpointsResponse>}
+ *     Promise that resolves to the response
+ */
+proto.kurtosis_portal_daemon.KurtosisPortalServerPromiseClient.prototype.getRemoteEndpoints =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/kurtosis_portal_daemon.KurtosisPortalServer/GetRemoteEndpoints',
+      request,
+      metadata || {},
+      methodDescriptor_KurtosisPortalServer_GetRemoteEndpoints);
 };
 
 
