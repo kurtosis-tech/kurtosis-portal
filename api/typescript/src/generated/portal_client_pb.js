@@ -23,8 +23,8 @@ var global = (function() {
 
 var google_api_annotations_pb = require('./google/api/annotations_pb.js');
 goog.object.extend(proto, google_api_annotations_pb);
-var portal_endpoint_pb = require('./portal_endpoint_pb.js');
-goog.object.extend(proto, portal_endpoint_pb);
+var portal_remote_endpoint_pb = require('./portal_remote_endpoint_pb.js');
+goog.object.extend(proto, portal_remote_endpoint_pb);
 var portal_ping_pb = require('./portal_ping_pb.js');
 goog.object.extend(proto, portal_ping_pb);
 goog.exportSymbol('proto.kurtosis_portal_daemon.ForwardPortArgs', null, global);

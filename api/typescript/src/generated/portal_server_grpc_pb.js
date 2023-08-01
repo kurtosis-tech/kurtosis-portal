@@ -4,7 +4,7 @@
 var grpc = require('@grpc/grpc-js');
 var portal_server_pb = require('./portal_server_pb.js');
 var google_api_annotations_pb = require('./google/api/annotations_pb.js');
-var portal_endpoint_pb = require('./portal_endpoint_pb.js');
+var portal_remote_endpoint_pb = require('./portal_remote_endpoint_pb.js');
 var portal_ping_pb = require('./portal_ping_pb.js');
 
 function serialize_kurtosis_portal_daemon_GetRemoteEndpointsArgs(arg) {

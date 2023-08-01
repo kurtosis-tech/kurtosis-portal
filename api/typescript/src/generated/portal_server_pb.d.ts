@@ -1,7 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as google_api_annotations_pb from './google/api/annotations_pb';
-import * as portal_endpoint_pb from './portal_endpoint_pb';
+import * as portal_remote_endpoint_pb from './portal_remote_endpoint_pb';
 import * as portal_ping_pb from './portal_ping_pb';
 
 
@@ -20,8 +20,8 @@ export namespace GetRemoteEndpointsArgs {
 }
 
 export class RemoteEndpoint extends jspb.Message {
-  getRemoteEndpointType(): portal_endpoint_pb.RemoteEndpointType;
-  setRemoteEndpointType(value: portal_endpoint_pb.RemoteEndpointType): RemoteEndpoint;
+  getRemoteEndpointType(): portal_remote_endpoint_pb.RemoteEndpointType;
+  setRemoteEndpointType(value: portal_remote_endpoint_pb.RemoteEndpointType): RemoteEndpoint;
 
   getRemoteHost(): string;
   setRemoteHost(value: string): RemoteEndpoint;
@@ -36,7 +36,7 @@ export class RemoteEndpoint extends jspb.Message {
 
 export namespace RemoteEndpoint {
   export type AsObject = {
-    remoteEndpointType: portal_endpoint_pb.RemoteEndpointType,
+    remoteEndpointType: portal_remote_endpoint_pb.RemoteEndpointType,
     remoteHost: string,
   }
 }
