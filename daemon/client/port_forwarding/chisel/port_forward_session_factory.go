@@ -54,7 +54,7 @@ type PortForwardSessionFactory struct {
 
 	portalServerClient portal_api.KurtosisPortalServerClient
 
-	endpoints map[portal_api.RemoteEndpointType]string
+	remote_endpoints map[portal_api.RemoteEndpointType]string
 }
 
 // NewPortForwardSessionFactory creates a new port tunnelling sessions factory.
@@ -77,7 +77,7 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 		chiselPort:         portalChiselPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
-		endpoints:          endpoints,
+		remote_endpoints:          endpoints,
 	}, nil
 }
 
@@ -97,7 +97,7 @@ func NewPortForwardSessionFactoryForLocalContext() (*PortForwardSessionFactory, 
 		chiselPort:         server.PortalServerTunnelPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
-		endpoints:          map[portal_api.RemoteEndpointType]string{},
+		remote_endpoints:          map[portal_api.RemoteEndpointType]string{},
 	}, nil
 }
 
@@ -105,6 +105,7 @@ func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.Por
 	factory.Lock()
 	defer factory.Unlock()
 
+	// Get the remote host hosting this type of remote endpoint and use it for this session
 	remoteHost := factory.getRemoteEndpointHost(remoteEndpointType)
 	params.RemoteHost = remoteHost
 
@@ -189,8 +190,10 @@ func (factory *PortForwardSessionFactory) IsHealthy(ctx context.Context) error {
 }
 
 func (factory *PortForwardSessionFactory) getRemoteEndpointHost(endpointType portal_api.RemoteEndpointType) string {
-	host, found := factory.endpoints[endpointType]
+	host, found := factory.remote_endpoints[endpointType]
 	if !found {
+		// We assume that this type of endpoint is hosted by the host where the portal server is running if we cannot find it
+		// in the list of remote endpoints.
 		return "localhost"
 	}
 	return host
@@ -280,6 +283,7 @@ func writeTlsConfigToTempDir(ca []byte, cert []byte, key []byte) (string, func()
 }
 
 // Get list of endpoint type and matching host from the Portal server and return a map of the endpoints where the key is the endpoint type
+// so the lookup time is reduced.
 func getRemoteEndpoints(serverClient portal_api.KurtosisPortalServerClient) (map[portal_api.RemoteEndpointType]string, error) {
 	getRemoteEndpointsResponse, err := serverClient.GetRemoteEndpoints(context.Background(), portal_constructors.NewGetRemoteEndpointsArgs())
 	if err != nil {
