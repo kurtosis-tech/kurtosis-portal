@@ -19,6 +19,12 @@ const (
 	PortalServerTunnelPort          = 9721
 )
 
+var (
+	remoteHostEndpointTypes = []portal_api.RemoteEndpointType{
+		portal_api.RemoteEndpointType_Apic,
+		portal_api.RemoteEndpointType_UserService,
+	}
+)
 type KurtosisPortalServer struct {
 	tunnelMutex *sync.Mutex
 
@@ -50,10 +56,7 @@ func (portalServer *KurtosisPortalServer) GetRemoteEndpoints(ctx context.Context
 	remoteEndpointTypes := []portal_api.RemoteEndpointType{}
 	if portalServer.remoteHost != "" {
 		// The APICs and User services are running on the remote backend host
-		remoteEndpointTypes = []portal_api.RemoteEndpointType{
-			portal_api.RemoteEndpointType_Apic,
-			portal_api.RemoteEndpointType_UserService,
-		}
+		remoteEndpointTypes = remoteHostEndpointTypes
 	}
 	return portal_constructors.NewGetRemoteEndpointsResponse(remoteEndpointTypes, portalServer.remoteHost), nil
 }
