@@ -63,9 +63,9 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to connect to remote portal server")
 	}
-	endpoints, err := getRemoteEndpoints(serverClient)
+	remoteEndpoints, err := getRemoteEndpoints(serverClient)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "Unable to retrieve the endpoints from the Portal server")
+		return nil, stacktrace.Propagate(err, "Unable to retrieve the remote endpoints from the Portal server")
 	}
 	return &PortForwardSessionFactory{
 		RWMutex:            sync.RWMutex{},
@@ -77,7 +77,7 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 		chiselPort:         portalChiselPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
-		remote_endpoints:          endpoints,
+		remote_endpoints:          remoteEndpoints,
 	}, nil
 }
 
@@ -193,7 +193,7 @@ func (factory *PortForwardSessionFactory) getRemoteEndpointHost(endpointType por
 	host, found := factory.remote_endpoints[endpointType]
 	if !found {
 		// We assume that this type of remote endpoint is hosted by the host where the portal server is running if we cannot find it
-		// in the list of remote endpoints.
+		// in the map of remote endpoints.
 		return "localhost"
 	}
 	return host
@@ -289,9 +289,9 @@ func getRemoteEndpoints(serverClient portal_api.KurtosisPortalServerClient) (map
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to retrieve the remote endpoints from the Portal Server.")
 	}
-	endpoints := map[portal_api.RemoteEndpointType]string{}
-	for _, endpoint := range getRemoteEndpointsResponse.RemoteEndpoints {
-		endpoints[endpoint.RemoteEndpointType] = endpoint.RemoteHost
+	remoteEndpoints := map[portal_api.RemoteEndpointType]string{}
+	for _, remoteEndpoint := range getRemoteEndpointsResponse.RemoteEndpoints {
+		remoteEndpoints[remoteEndpoint.RemoteEndpointType] = remoteEndpoint.RemoteHost
 	}
-	return endpoints, nil
+	return remoteEndpoints, nil
 }

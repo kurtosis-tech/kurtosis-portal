@@ -47,15 +47,15 @@ func (portalServer *KurtosisPortalServer) Ping(ctx context.Context, args *portal
 }
 
 func (portalServer *KurtosisPortalServer) GetRemoteEndpoints(ctx context.Context, args *portal_api.GetRemoteEndpointsArgs) (*portal_api.GetRemoteEndpointsResponse, error) {
-	endpointTypes := []portal_api.RemoteEndpointType{}
+	remoteEndpointTypes := []portal_api.RemoteEndpointType{}
 	if portalServer.remoteHost != "" {
 		// The APICs and User services are running on the remote backend host
-		endpointTypes = []portal_api.RemoteEndpointType{
+		remoteEndpointTypes = []portal_api.RemoteEndpointType{
 			portal_api.RemoteEndpointType_Apic,
 			portal_api.RemoteEndpointType_UserService,
 		}
 	}
-	return portal_constructors.NewGetRemoteEndpointsResponse(endpointTypes, portalServer.remoteHost), nil
+	return portal_constructors.NewGetRemoteEndpointsResponse(remoteEndpointTypes, portalServer.remoteHost), nil
 }
 
 func (portalServer *KurtosisPortalServer) StartTunnelServer(ctx context.Context, host string, listeningPort uint32) error {

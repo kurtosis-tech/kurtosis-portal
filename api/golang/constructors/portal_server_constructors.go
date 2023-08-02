@@ -6,16 +6,16 @@ func NewGetRemoteEndpointsArgs() *portal_api.GetRemoteEndpointsArgs {
 	return &portal_api.GetRemoteEndpointsArgs{}
 }
 
-func NewGetRemoteEndpointsResponse(endpointTypes []portal_api.RemoteEndpointType, remoteHost string) *portal_api.GetRemoteEndpointsResponse {
-	endpoints := []*portal_api.RemoteEndpoint{}
-	for endpointType := range endpointTypes {
-		endpoint := portal_api.RemoteEndpoint{
-			RemoteEndpointType: portal_api.RemoteEndpointType(endpointType),
+func NewGetRemoteEndpointsResponse(remoteEndpointTypes []portal_api.RemoteEndpointType, remoteHost string) *portal_api.GetRemoteEndpointsResponse {
+	remoteEndpoints := []*portal_api.RemoteEndpoint{}
+	for remoteEndpointType := range remoteEndpointTypes {
+		remoteEndpoint := portal_api.RemoteEndpoint{
+			RemoteEndpointType: portal_api.RemoteEndpointType(remoteEndpointType),
 			RemoteHost:         remoteHost,
 		}
-		endpoints = append(endpoints, &endpoint)
+		remoteEndpoints = append(remoteEndpoints, &remoteEndpoint)
 	}
 	return &portal_api.GetRemoteEndpointsResponse{
-		RemoteEndpoints: endpoints,
+		RemoteEndpoints: remoteEndpoints,
 	}
 }
