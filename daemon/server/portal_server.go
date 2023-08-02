@@ -49,6 +49,7 @@ func (portalServer *KurtosisPortalServer) Ping(ctx context.Context, args *portal
 func (portalServer *KurtosisPortalServer) GetRemoteEndpoints(ctx context.Context, args *portal_api.GetRemoteEndpointsArgs) (*portal_api.GetRemoteEndpointsResponse, error) {
 	endpointTypes := []portal_api.RemoteEndpointType{}
 	if portalServer.remoteHost != "" {
+		// The APICs and User services are running on the remote backend host
 		endpointTypes = []portal_api.RemoteEndpointType{
 			portal_api.RemoteEndpointType_Apic,
 			portal_api.RemoteEndpointType_UserService,
