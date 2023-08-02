@@ -16,5 +16,5 @@ def test(plan, portal_image):
     )
 
     plan.assert(response["code"], "==", 200)
-    expected_body = "{\n \"remoteEndpoints\": []\n}"
+    expected_body = "{\n \"remoteEndpoints\": []\n}\n"
     plan.assert(response["body"], "==", expected_body)

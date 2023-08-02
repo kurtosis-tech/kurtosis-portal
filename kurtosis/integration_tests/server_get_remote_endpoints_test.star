@@ -17,5 +17,5 @@ def test(plan, portal_image):
     )
 
     plan.assert(response["code"], "==", 200)
-    expected_body = "{\n \"remoteEndpoints\": [\n  {\n   \"remoteEndpointType\": \"Apic\",\n   \"remoteHost\": \"{}\"\n  },\n  {\n   \"remoteEndpointType\": \"UserService\",\n   \"remoteHost\": \"{}\"\n  }\n ]\n}\n".format(remote_host, remote_host)
+    expected_body = "{\n \"remoteEndpoints\": [\n  {\n   \"remoteEndpointType\": \"Apic\",\n   \"remoteHost\": \"10.0.0.2\"\n  },\n  {\n   \"remoteEndpointType\": \"UserService\",\n   \"remoteHost\": \"10.0.0.2\"\n  }\n ]\n}\n"
     plan.assert(response["body"], "==", expected_body)
