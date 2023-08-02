@@ -194,7 +194,7 @@ func (factory *PortForwardSessionFactory) getRemoteEndpointHost(endpointType por
 	if !found {
 		// We assume that this type of remote endpoint is hosted by the host where the portal server is running if we cannot find it
 		// in the map of remote endpoints.
-		return "localhost"
+		return locallyRunningServerName
 	}
 	return host
 }
