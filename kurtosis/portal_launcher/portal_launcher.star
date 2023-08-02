@@ -23,7 +23,7 @@ RESOURCE_FOLDER = "github.com/kurtosis-tech/kurtosis-portal/kurtosis/portal_laun
 DEFAULT_CONTEXT_ID_AND_NAME = "default"
 
 
-def launch_portal(plan, portal_image, service_name, server_only=False, current_context_id=DEFAULT_CONTEXT_ID_AND_NAME, remote_contexts={}):
+def launch_portal(plan, portal_image, service_name, server_only=False, current_context_id=DEFAULT_CONTEXT_ID_AND_NAME, remote_contexts={}, remote_host=None):
     portal_service_name = service_name + PORTAL_SERVICE_SUFFIX
     proxy_service_name = service_name + PORTAL_PROXY_SUFFIX
 
@@ -39,12 +39,17 @@ def launch_portal(plan, portal_image, service_name, server_only=False, current_c
     if not server_only:
         portal_ports[CLIENT_GRPC_PORT_ID] = PortSpec(number=CLIENT_GRPC_PORT)
 
+    cmd = []
+    if server_only:
+        cmd.append("--server-only")
+    if remote_host:
+        cmd.extend(["--remote-host", remote_host])
     portal_service = plan.add_service(
         name=portal_service_name,
         config=ServiceConfig(
             image=portal_image,
             ports=portal_ports,
-            cmd=["--server-only" if server_only else ""], # TODO: maybe make it configurable here
+            cmd=cmd,
             files={
                 "/root/.config/kurtosis/": contexts_config_artifact,
             }

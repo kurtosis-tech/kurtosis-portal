@@ -6,6 +6,7 @@ package kurtosis_portal_daemon;
 option go_package = "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated";
 
 import "google/api/annotations.proto";
+import "portal_remote_endpoint.proto";
 import "portal_ping.proto";
 
 service KurtosisPortalClient {
@@ -50,7 +51,9 @@ message ForwardPortArgs {
 
   uint32 remote_port_number = 2;
 
-  optional TransportProtocol protocol = 3;
+  RemoteEndpointType remote_endpoint_type = 3;
+
+  optional TransportProtocol protocol = 4;
 }
 
 enum TransportProtocol {

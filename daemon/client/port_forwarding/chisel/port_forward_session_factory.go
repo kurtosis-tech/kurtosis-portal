@@ -3,6 +3,11 @@ package chisel
 import (
 	"context"
 	"fmt"
+	"os"
+	"path"
+	"sync"
+	"time"
+
 	"github.com/google/uuid"
 	chclient "github.com/jpillora/chisel/client"
 	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
@@ -15,10 +20,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
-	"os"
-	"path"
-	"sync"
-	"time"
 )
 
 const (
@@ -52,6 +53,8 @@ type PortForwardSessionFactory struct {
 	currentSessions map[uuid.UUID]port_forwarding.PortForwardingSession
 
 	portalServerClient portal_api.KurtosisPortalServerClient
+
+	remote_endpoints map[portal_api.RemoteEndpointType]string
 }
 
 // NewPortForwardSessionFactory creates a new port tunnelling sessions factory.
@@ -59,6 +62,10 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 	serverClient, err := portalServerClient(portalHost, portalGrpcPort, tlsCa, tlsClientCert, tlsClientKey)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to connect to remote portal server")
+	}
+	remoteEndpoints, err := getRemoteEndpoints(serverClient)
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "Unable to retrieve the remote endpoints from the Portal server")
 	}
 	return &PortForwardSessionFactory{
 		RWMutex:            sync.RWMutex{},
@@ -70,6 +77,7 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 		chiselPort:         portalChiselPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
+		remote_endpoints:          remoteEndpoints,
 	}, nil
 }
 
@@ -77,7 +85,7 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 func NewPortForwardSessionFactoryForLocalContext() (*PortForwardSessionFactory, error) {
 	serverClient, err := portalServerClient(locallyRunningServerName, server.PortalServerGrpcPort, nil, nil, nil)
 	if err != nil {
-		return nil, stacktrace.Propagate(err, "Unable to connect to remote portal server")
+		return nil, stacktrace.Propagate(err, "Unable to connect to local portal server")
 	}
 	return &PortForwardSessionFactory{
 		RWMutex:            sync.RWMutex{},
@@ -89,12 +97,17 @@ func NewPortForwardSessionFactoryForLocalContext() (*PortForwardSessionFactory, 
 		chiselPort:         server.PortalServerTunnelPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
+		remote_endpoints:          map[portal_api.RemoteEndpointType]string{},
 	}, nil
 }
 
-func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.PortForwardingParams) (port_forwarding.PortForwardingSession, error) {
+func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.PortForwardingParams, remoteEndpointType portal_api.RemoteEndpointType) (port_forwarding.PortForwardingSession, error) {
 	factory.Lock()
 	defer factory.Unlock()
+
+	// Get the remote host hosting this type of remote endpoint and use it for this session
+	remoteHost := factory.getRemoteEndpointHost(remoteEndpointType)
+	params.RemoteHost = remoteHost
 
 	if found, existingSessionsUuid := factory.getSimilarExistingSessionsIfAny(params); found {
 		logrus.Debugf("Sessions with same params '%s' already exists with UUID '%s'. Returning it.", params.String(), existingSessionsUuid)
@@ -174,6 +187,16 @@ func (factory *PortForwardSessionFactory) IsHealthy(ctx context.Context) error {
 		return stacktrace.Propagate(err, "Unable to communicate with Portal Server.")
 	}
 	return nil
+}
+
+func (factory *PortForwardSessionFactory) getRemoteEndpointHost(endpointType portal_api.RemoteEndpointType) string {
+	host, found := factory.remote_endpoints[endpointType]
+	if !found {
+		// We assume that this type of remote endpoint is hosted by the host where the portal server is running if we cannot find it
+		// in the map of remote endpoints.
+		return locallyRunningServerName
+	}
+	return host
 }
 
 func (factory *PortForwardSessionFactory) getSimilarExistingSessionsIfAny(params *port_forwarding.PortForwardingParams) (bool, uuid.UUID) {
@@ -257,4 +280,18 @@ func writeTlsConfigToTempDir(ca []byte, cert []byte, key []byte) (string, func()
 		}
 	}
 	return tempDirectory, cleanDirectoryFunc, nil
+}
+
+// Get list of remote endpoint type and matching host from the Portal server and return a map of the remote endpoints
+// where the key is the remote endpoint type so lookup by remote endpoint type is fast.
+func getRemoteEndpoints(serverClient portal_api.KurtosisPortalServerClient) (map[portal_api.RemoteEndpointType]string, error) {
+	getRemoteEndpointsResponse, err := serverClient.GetRemoteEndpoints(context.Background(), portal_constructors.NewGetRemoteEndpointsArgs())
+	if err != nil {
+		return nil, stacktrace.Propagate(err, "Unable to retrieve the remote endpoints from the Portal Server.")
+	}
+	remoteEndpoints := map[portal_api.RemoteEndpointType]string{}
+	for _, remoteEndpoint := range getRemoteEndpointsResponse.RemoteEndpoints {
+		remoteEndpoints[remoteEndpoint.RemoteEndpointType] = remoteEndpoint.RemoteHost
+	}
+	return remoteEndpoints, nil
 }

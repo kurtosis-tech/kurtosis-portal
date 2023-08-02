@@ -1,6 +1,7 @@
 import * as jspb from 'google-protobuf'
 
 import * as google_api_annotations_pb from './google/api/annotations_pb';
+import * as portal_remote_endpoint_pb from './portal_remote_endpoint_pb';
 import * as portal_ping_pb from './portal_ping_pb';
 
 
@@ -39,6 +40,9 @@ export class ForwardPortArgs extends jspb.Message {
   getRemotePortNumber(): number;
   setRemotePortNumber(value: number): ForwardPortArgs;
 
+  getRemoteEndpointType(): portal_remote_endpoint_pb.RemoteEndpointType;
+  setRemoteEndpointType(value: portal_remote_endpoint_pb.RemoteEndpointType): ForwardPortArgs;
+
   getProtocol(): TransportProtocol;
   setProtocol(value: TransportProtocol): ForwardPortArgs;
   hasProtocol(): boolean;
@@ -56,12 +60,13 @@ export namespace ForwardPortArgs {
   export type AsObject = {
     localPortNumber: number,
     remotePortNumber: number,
+    remoteEndpointType: portal_remote_endpoint_pb.RemoteEndpointType,
     protocol?: TransportProtocol,
   }
 
   export enum ProtocolCase { 
     _PROTOCOL_NOT_SET = 0,
-    PROTOCOL = 3,
+    PROTOCOL = 4,
   }
 }
 

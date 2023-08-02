@@ -20,7 +20,11 @@ TEST_FILE_PATTERN="*_test.star"
 version="$(./daemon/scripts/get-docker-tag.sh)"
 for test_file in ${TEST_SOURCE_ROOT}${TEST_FILE_PATTERN}; do
     test_file_name=$(basename ${test_file})
+    enclave_name="${test_file_name%.*}"
     echo "Running test for test file ${test_file_name}"
-    kurtosis run "${KURTOSIS_PKG_ROOT}" "{\"version\": \"${version}\", \"test\": \"${test_file_name}\"}"
-    # TODO: cleanup enclaves if the run is successful
+    kurtosis run "${KURTOSIS_PKG_ROOT}" --enclave "${enclave_name}" "{\"version\": \"${version}\", \"test\": \"${test_file_name}\"}"
+    if [ $? -eq 0 ] 
+    then
+        kurtosis enclave rm -f "${enclave_name}"
+    fi
 done

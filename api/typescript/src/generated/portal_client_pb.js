@@ -23,6 +23,8 @@ var global = (function() {
 
 var google_api_annotations_pb = require('./google/api/annotations_pb.js');
 goog.object.extend(proto, google_api_annotations_pb);
+var portal_remote_endpoint_pb = require('./portal_remote_endpoint_pb.js');
+goog.object.extend(proto, portal_remote_endpoint_pb);
 var portal_ping_pb = require('./portal_ping_pb.js');
 goog.object.extend(proto, portal_ping_pb);
 goog.exportSymbol('proto.kurtosis_portal_daemon.ForwardPortArgs', null, global);
@@ -350,7 +352,8 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.toObject = function(includeInstance
   var f, obj = {
     localPortNumber: jspb.Message.getFieldWithDefault(msg, 1, 0),
     remotePortNumber: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    protocol: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    remoteEndpointType: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    protocol: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -396,6 +399,10 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.deserializeBinaryFromReader = funct
       msg.setRemotePortNumber(value);
       break;
     case 3:
+      var value = /** @type {!proto.kurtosis_portal_daemon.RemoteEndpointType} */ (reader.readEnum());
+      msg.setRemoteEndpointType(value);
+      break;
+    case 4:
       var value = /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (reader.readEnum());
       msg.setProtocol(value);
       break;
@@ -442,10 +449,17 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.serializeBinaryToWriter = function(
       f
     );
   }
-  f = /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (jspb.Message.getField(message, 3));
-  if (f != null) {
+  f = message.getRemoteEndpointType();
+  if (f !== 0.0) {
     writer.writeEnum(
       3,
+      f
+    );
+  }
+  f = /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (jspb.Message.getField(message, 4));
+  if (f != null) {
+    writer.writeEnum(
+      4,
       f
     );
   }
@@ -489,11 +503,29 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.setRemotePortNumber = fun
 
 
 /**
- * optional TransportProtocol protocol = 3;
+ * optional RemoteEndpointType remote_endpoint_type = 3;
+ * @return {!proto.kurtosis_portal_daemon.RemoteEndpointType}
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.getRemoteEndpointType = function() {
+  return /** @type {!proto.kurtosis_portal_daemon.RemoteEndpointType} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {!proto.kurtosis_portal_daemon.RemoteEndpointType} value
+ * @return {!proto.kurtosis_portal_daemon.ForwardPortArgs} returns this
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.setRemoteEndpointType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 3, value);
+};
+
+
+/**
+ * optional TransportProtocol protocol = 4;
  * @return {!proto.kurtosis_portal_daemon.TransportProtocol}
  */
 proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.getProtocol = function() {
-  return /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+  return /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -502,7 +534,7 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.getProtocol = function() 
  * @return {!proto.kurtosis_portal_daemon.ForwardPortArgs} returns this
  */
 proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.setProtocol = function(value) {
-  return jspb.Message.setField(this, 3, value);
+  return jspb.Message.setField(this, 4, value);
 };
 
 
@@ -511,7 +543,7 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.setProtocol = function(va
  * @return {!proto.kurtosis_portal_daemon.ForwardPortArgs} returns this
  */
 proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.clearProtocol = function() {
-  return jspb.Message.setField(this, 3, undefined);
+  return jspb.Message.setField(this, 4, undefined);
 };
 
 
@@ -520,7 +552,7 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.clearProtocol = function(
  * @return {boolean}
  */
 proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.hasProtocol = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.getField(this, 4) != null;
 };
 
 
