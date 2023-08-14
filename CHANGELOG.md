@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.4...0.0.5) (2023-08-02)
+
+
+### Features
+
+* Portal tunneling to remote endpoints ([#44](https://github.com/kurtosis-tech/kurtosis-portal/issues/44)) ([745e2a1](https://github.com/kurtosis-tech/kurtosis-portal/commit/745e2a17f0f630fbb58f7bdb8f3034a2dc98b807))
+
 ## [0.0.4](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.3...0.0.4) (2023-07-12)
 
 
