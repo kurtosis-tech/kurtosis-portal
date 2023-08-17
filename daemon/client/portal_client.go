@@ -136,7 +136,7 @@ func (portalClient *KurtosisPortalClient) ForwardPort(_ context.Context, args *p
 	}
 
 	if waitUntilReady {
-		if err = waitUntilPortForwardReady(int(localPort), protocol); err != nil {
+		if err = waitUntilPortForwarded(int(localPort), protocol); err != nil {
 			return nil, stacktrace.Propagate(err, "Error forwarding port %d: '%v'", localPort, err)
 		}
 	}
@@ -185,7 +185,7 @@ func (portalClient *KurtosisPortalClient) closeUnlocked() error {
 	return nil
 }
 
-func waitUntilPortForwardReady(portNumber int, transport portal_api.TransportProtocol) error {
+func waitUntilPortForwarded(portNumber int, transport portal_api.TransportProtocol) error {
 	var err error
 	var transportStr string
 	if transport == portal_api.TransportProtocol_TCP {
@@ -194,6 +194,7 @@ func waitUntilPortForwardReady(portNumber int, transport portal_api.TransportPro
 		transportStr = "udp"
 	}
 
+	logrus.Debugf("Waiting until port %d is forwarded", portNumber)
 	time.Sleep(waitUntilPortForwaredInitialPause)
 	for i := 0; i < waitUntilPortForwardedTries; i += 1 {
 		conn, err := net.DialTimeout(transportStr, net.JoinHostPort(waitUntilPortForwardedHost, strconv.Itoa(portNumber)), waitUntilPortForwardedDialTimeout)
@@ -202,6 +203,7 @@ func waitUntilPortForwardReady(portNumber int, transport portal_api.TransportPro
 		}
 		if conn != nil {
 			conn.Close()
+			logrus.Debugf("Port %d is forwarded", portNumber)
 			return nil
 		}
 		logrus.Debugf("Waiting for port to be forwarded, retry %d", i+1)
