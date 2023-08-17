@@ -10,12 +10,13 @@ func NewSwitchContextResponse() *portal_api.SwitchContextResponse {
 	return &portal_api.SwitchContextResponse{}
 }
 
-func NewForwardPortArgs(localPortNumber uint32, remotePortNumber uint32, remoteEndpointType portal_api.RemoteEndpointType, protocol *portal_api.TransportProtocol) *portal_api.ForwardPortArgs {
+func NewForwardPortArgs(localPortNumber uint32, remotePortNumber uint32, remoteEndpointType portal_api.RemoteEndpointType, protocol *portal_api.TransportProtocol, waitUntilReady *bool) *portal_api.ForwardPortArgs {
 	return &portal_api.ForwardPortArgs{
 		LocalPortNumber:    localPortNumber,
 		RemotePortNumber:   remotePortNumber,
 		RemoteEndpointType: remoteEndpointType,
 		Protocol:           protocol,
+		WaitUntilReady:     waitUntilReady,
 	}
 }
 
