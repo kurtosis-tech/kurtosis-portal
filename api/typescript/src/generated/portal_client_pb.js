@@ -353,7 +353,8 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.toObject = function(includeInstance
     localPortNumber: jspb.Message.getFieldWithDefault(msg, 1, 0),
     remotePortNumber: jspb.Message.getFieldWithDefault(msg, 2, 0),
     remoteEndpointType: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    protocol: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    protocol: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    waitUntilReady: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -405,6 +406,10 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.deserializeBinaryFromReader = funct
     case 4:
       var value = /** @type {!proto.kurtosis_portal_daemon.TransportProtocol} */ (reader.readEnum());
       msg.setProtocol(value);
+      break;
+    case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setWaitUntilReady(value);
       break;
     default:
       reader.skipField();
@@ -460,6 +465,13 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.serializeBinaryToWriter = function(
   if (f != null) {
     writer.writeEnum(
       4,
+      f
+    );
+  }
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 5));
+  if (f != null) {
+    writer.writeBool(
+      5,
       f
     );
   }
@@ -553,6 +565,42 @@ proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.clearProtocol = function(
  */
 proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.hasProtocol = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional bool wait_until_ready = 5;
+ * @return {boolean}
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.getWaitUntilReady = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.kurtosis_portal_daemon.ForwardPortArgs} returns this
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.setWaitUntilReady = function(value) {
+  return jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.kurtosis_portal_daemon.ForwardPortArgs} returns this
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.clearWaitUntilReady = function() {
+  return jspb.Message.setField(this, 5, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.kurtosis_portal_daemon.ForwardPortArgs.prototype.hasWaitUntilReady = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 

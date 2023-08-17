@@ -48,6 +48,11 @@ export class ForwardPortArgs extends jspb.Message {
   hasProtocol(): boolean;
   clearProtocol(): ForwardPortArgs;
 
+  getWaitUntilReady(): boolean;
+  setWaitUntilReady(value: boolean): ForwardPortArgs;
+  hasWaitUntilReady(): boolean;
+  clearWaitUntilReady(): ForwardPortArgs;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ForwardPortArgs.AsObject;
   static toObject(includeInstance: boolean, msg: ForwardPortArgs): ForwardPortArgs.AsObject;
@@ -62,11 +67,17 @@ export namespace ForwardPortArgs {
     remotePortNumber: number,
     remoteEndpointType: portal_remote_endpoint_pb.RemoteEndpointType,
     protocol?: TransportProtocol,
+    waitUntilReady?: boolean,
   }
 
   export enum ProtocolCase { 
     _PROTOCOL_NOT_SET = 0,
     PROTOCOL = 4,
+  }
+
+  export enum WaitUntilReadyCase { 
+    _WAIT_UNTIL_READY_NOT_SET = 0,
+    WAIT_UNTIL_READY = 5,
   }
 }
 
