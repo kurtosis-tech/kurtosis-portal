@@ -55,7 +55,7 @@ func (portalClient *KurtosisPortalClient) Ping(ctx context.Context, ping *portal
 }
 
 func (portalClient *KurtosisPortalClient) SwitchContext(_ context.Context, _ *portal_api.SwitchContextArgs) (*portal_api.SwitchContextResponse, error) {
-	contextStore := store.GetContextConfigStore()
+	contextStore := store.GetContextsConfigStore()
 
 	portalClient.Lock()
 	defer portalClient.Unlock()
