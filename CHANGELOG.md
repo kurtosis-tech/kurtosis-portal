@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.5...0.0.6) (2023-08-18)
+
+
+### Bug Fixes
+
+* Forward port wait until ready option ([#46](https://github.com/kurtosis-tech/kurtosis-portal/issues/46)) ([73429a0](https://github.com/kurtosis-tech/kurtosis-portal/commit/73429a049c065c598849da3605ed0a78d1b60ccb))
+
 ## [0.0.5](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.4...0.0.5) (2023-08-02)
 
 
