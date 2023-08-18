@@ -2,7 +2,10 @@ package client
 
 import (
 	"context"
+	"net"
+	"strconv"
 	"sync"
+	"time"
 
 	portal_constructors "github.com/kurtosis-tech/kurtosis-portal/api/golang/constructors"
 	portal_api "github.com/kurtosis-tech/kurtosis-portal/api/golang/generated"
@@ -20,6 +23,12 @@ const (
 
 	DefaultRemoteHost    = ""
 	DefaultReverseTunnel = false
+
+	waitUntilPortForwardedTries       = 3
+	waitUntilPortForwaredInitialPause = 500 * time.Millisecond
+	waitUntilPortForwaredRetryPause   = 500 * time.Millisecond
+	waitUntilPortForwardedHost        = "localhost"
+	waitUntilPortForwardedDialTimeout = 1 * time.Second
 )
 
 type KurtosisPortalClient struct {
@@ -110,8 +119,10 @@ func (portalClient *KurtosisPortalClient) ForwardPort(_ context.Context, args *p
 	localPort := args.LocalPortNumber
 	remotePort := args.RemotePortNumber
 	remoteEndpointType := args.RemoteEndpointType
+	protocol := args.GetProtocol()
+	waitUntilReady := args.GetWaitUntilReady()
 
-	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel, args.GetProtocol()), remoteEndpointType)
+	session, err := portalClient.factory.NewSession(port_forwarding.NewPortForwardingParams(localPort, DefaultRemoteHost, remotePort, DefaultReverseTunnel, protocol), remoteEndpointType)
 	if err != nil {
 		return nil, stacktrace.Propagate(err, "Unable to initiate new session from %d to %d", localPort, remotePort)
 	}
@@ -122,6 +133,12 @@ func (portalClient *KurtosisPortalClient) ForwardPort(_ context.Context, args *p
 
 	if err = session.RunAsync(); err != nil {
 		return nil, stacktrace.Propagate(err, "Error running port forward session")
+	}
+
+	if waitUntilReady {
+		if err = waitUntilPortForwarded(int(localPort), protocol); err != nil {
+			return nil, stacktrace.Propagate(err, "Error forwarding port %d: '%v'", localPort, err)
+		}
 	}
 
 	return portal_constructors.NewForwardPortResponse(), nil
@@ -166,4 +183,31 @@ func (portalClient *KurtosisPortalClient) closeUnlocked() error {
 
 	portalClient.factory = nil
 	return nil
+}
+
+func waitUntilPortForwarded(portNumber int, transport portal_api.TransportProtocol) error {
+	var err error
+	var transportStr string
+	if transport == portal_api.TransportProtocol_TCP {
+		transportStr = "tcp"
+	} else if transport == portal_api.TransportProtocol_UDP {
+		transportStr = "udp"
+	}
+
+	logrus.Debugf("Waiting until port %d is forwarded", portNumber)
+	time.Sleep(waitUntilPortForwaredInitialPause)
+	for i := 0; i < waitUntilPortForwardedTries; i += 1 {
+		conn, err := net.DialTimeout(transportStr, net.JoinHostPort(waitUntilPortForwardedHost, strconv.Itoa(portNumber)), waitUntilPortForwardedDialTimeout)
+		if err != nil {
+			return stacktrace.Propagate(err, "Port %d dialing failed with '%v'", portNumber, err)
+		}
+		if conn != nil {
+			conn.Close()
+			logrus.Debugf("Port %d is forwarded", portNumber)
+			return nil
+		}
+		logrus.Debugf("Waiting for port to be forwarded, retry %d", i+1)
+		time.Sleep(waitUntilPortForwaredRetryPause)
+	}
+	return stacktrace.Propagate(err, "Port forward failed, last error was '%v'", err)
 }

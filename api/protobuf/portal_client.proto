@@ -54,6 +54,8 @@ message ForwardPortArgs {
   RemoteEndpointType remote_endpoint_type = 3;
 
   optional TransportProtocol protocol = 4;
+
+  optional bool wait_until_ready = 5;
 }
 
 enum TransportProtocol {
