@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.6...0.0.7) (2023-08-30)
+
+
+### Bug Fixes
+
+* Unlimited reconnect retries for ports to forward ([#49](https://github.com/kurtosis-tech/kurtosis-portal/issues/49)) ([573c909](https://github.com/kurtosis-tech/kurtosis-portal/commit/573c90972d85ed4db33255a36dd5208d57b487ef))
+
 ## [0.0.6](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.5...0.0.6) (2023-08-18)
 
 
