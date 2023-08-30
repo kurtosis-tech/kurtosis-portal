@@ -36,6 +36,10 @@ const (
 	certFileName       = "cert.pem"
 	keyFileName        = "key.pem"
 	tlsFilesPerm       = 0644
+
+	chiselClientConfigKeepAlive        = 25 * time.Second
+	chiselClientConfigMaxRetry         = -1 // unlimited retries
+	chiselClientConfigMaxRetryInterval = 10 * time.Second
 )
 
 type PortForwardSessionFactory struct {
@@ -77,7 +81,7 @@ func NewPortForwardSessionFactory(portalHost string, portalGrpcPort uint32, port
 		chiselPort:         portalChiselPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
-		remote_endpoints:          remoteEndpoints,
+		remote_endpoints:   remoteEndpoints,
 	}, nil
 }
 
@@ -97,7 +101,7 @@ func NewPortForwardSessionFactoryForLocalContext() (*PortForwardSessionFactory, 
 		chiselPort:         server.PortalServerTunnelPort,
 		currentSessions:    map[uuid.UUID]port_forwarding.PortForwardingSession{},
 		portalServerClient: serverClient,
-		remote_endpoints:          map[portal_api.RemoteEndpointType]string{},
+		remote_endpoints:   map[portal_api.RemoteEndpointType]string{},
 	}, nil
 }
 
@@ -145,9 +149,9 @@ func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.Por
 	chiselClientConfig := &chclient.Config{
 		Fingerprint:      "",
 		Auth:             "",
-		KeepAlive:        25 * time.Second,
-		MaxRetryCount:    5,
-		MaxRetryInterval: 1 * time.Second,
+		KeepAlive:        chiselClientConfigKeepAlive,
+		MaxRetryCount:    chiselClientConfigMaxRetry,
+		MaxRetryInterval: chiselClientConfigMaxRetryInterval,
 		Server:           serverUrl,
 		Proxy:            "",
 		Remotes: []string{
@@ -162,7 +166,7 @@ func (factory *PortForwardSessionFactory) NewSession(params *port_forwarding.Por
 			ServerName: serverName,
 		},
 		DialContext: nil,
-		Verbose:     false,
+		Verbose:     true,
 	}
 
 	chiselClient, err := chclient.NewClient(chiselClientConfig)
