@@ -15,5 +15,5 @@ def test(plan, portal_image):
         )
     )
 
-    plan.assert(response["code"], "==", 200)
-    plan.assert(response["body"], "==", "{}\n")
+    plan.verify(response["code"], "==", 200)
+    plan.verify(response["body"], "==", "{}\n")
