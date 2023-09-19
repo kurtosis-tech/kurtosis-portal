@@ -19,7 +19,7 @@ PORTAL_PROXY_SINGLE_PORT_ID = "proxy"
 
 # MISC constants
 ENVOY_IMAGE_NAME = "envoyproxy/envoy:v1.25-latest"
-RESOURCE_FOLDER = "/resources/"
+RESOURCE_FOLDER = "./resources/"
 DEFAULT_CONTEXT_ID_AND_NAME = "default"
 
 
