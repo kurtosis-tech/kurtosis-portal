@@ -1,4 +1,4 @@
-portal_launcher = import_module("/portal_launcher/portal_launcher.star")
+portal_launcher = import_module("../portal_launcher/portal_launcher.star")
 
 def test(plan, portal_image):
     # Create a server tha represents a Portal server running in the cloud
