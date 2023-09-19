@@ -2,10 +2,11 @@ TEST_ROOT_FOLDER = "github.com/kurtosis-tech/kurtosis-portal/kurtosis/integratio
 
 PORTAL_IMAGE="kurtosistech/kurtosis-portal"
 
+
 def run(plan, args):
     args_valid, test_name, portal_version = parse_args(args)
     if not args_valid:
-        plan.verify(1, "==", 0)
+        plan.verify("1", "==", "0")
 
     portal_image_with_version = "{image}:{version}".format(image=PORTAL_IMAGE, version=portal_version)
     test_to_run = import_module(TEST_ROOT_FOLDER + args["test"])
