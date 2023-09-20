@@ -1,4 +1,4 @@
-portal_launcher = import_module("github.com/kurtosis-tech/kurtosis-portal/kurtosis/portal_launcher/portal_launcher.star")
+portal_launcher = import_module("../portal_launcher/portal_launcher.star")
 
 def test(plan, portal_image):
     service_name = "portal-client"
