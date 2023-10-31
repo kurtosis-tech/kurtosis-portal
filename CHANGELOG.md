@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.8](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.7...0.0.8) (2023-10-31)
+
+
+### Bug Fixes
+
+* Fix verify statement in starlark package ([#53](https://github.com/kurtosis-tech/kurtosis-portal/issues/53)) ([ab937f3](https://github.com/kurtosis-tech/kurtosis-portal/commit/ab937f3ba5fcf0f5cf7e87a9a4131457995bcf9d))
+* relative paths so that intergration tests can run ([#60](https://github.com/kurtosis-tech/kurtosis-portal/issues/60)) ([349f1ec](https://github.com/kurtosis-tech/kurtosis-portal/commit/349f1ec9a443f74c12bf9caefe9572bb87c84ed4))
+* replace plan.assert with plan.verify ([#51](https://github.com/kurtosis-tech/kurtosis-portal/issues/51)) ([90eea8b](https://github.com/kurtosis-tech/kurtosis-portal/commit/90eea8ba7208ea2d92004cc84f9927a57424cd82))
+
 ## [0.0.7](https://github.com/kurtosis-tech/kurtosis-portal/compare/0.0.6...0.0.7) (2023-08-30)
 
 
