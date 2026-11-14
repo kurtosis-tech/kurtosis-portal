@@ -1,4 +1,4 @@
-TEST_ROOT_FOLDER = "/integration_tests/"
+TEST_ROOT_FOLDER = "./integration_tests/"
 
 PORTAL_IMAGE="kurtosistech/kurtosis-portal"
 
